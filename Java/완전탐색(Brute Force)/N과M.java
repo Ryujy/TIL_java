@@ -12,7 +12,7 @@ public class Main {
     }
 
     static int N, M;
-    static int[] selected;
+    static int[] selected, used; // used는 1) 중복 허용 X, A) 순서있게 나열 의 경우에 사용
 
     // Recurrence Function (재귀 함수)
     // 만약 M 개를 전부 고름   => 조건에 맞는 탐색을 한 가지 성공한 것!
@@ -37,8 +37,36 @@ public class Main {
                 selected[k] = 0;
             }
           
+          /* 2) 중복 허용 X , A) 순서있게 나열 */
+            // int 배열 used는 k 번째가 1이면 숫자 k가 사용됨을 나타낸다. 0은 숫자 k가 사용되지 않음을 의미.
+            for (int cand = 1; cand <= N; cand++) {
+                if(used[k] == 1) continue;
+                selected[k] = cand; used[k] = 1;
+                rec_func(k+1);
+                selected[k] = 0; used[k] = 0; 
+            }
           
-          
+         /* 1) 중복 허용 O , B) 고르기 
+            단, 고른 수열은 비내림차순. (길이가 M인 수열에서 1번째 요소 <= 2번째 요소 ... <= M번재 요소를 만족.)
+            즉, 1 2 3 (o) 3 2 1(x) 따라서 k번째는 k-1번째보다 크거나 같아야한다.
+         */
+            int start = selected[k-1];
+            if (start = 0) start = 1;
+            for(int cand = start; cand <= M; cand++) {
+                selected[k] = cand;
+                rec_func(k+1);
+                selected[k] = 0;
+            }
+            
+         /* 2) 중복 허용 X , B) 고르기 
+            단, 고른 수열은 오름차순. 즉, 1 2(o) 2 1(x) 따라서 k번째는 k-1번째보다 커야한다.
+         */
+            for(int cand = selected[k-1]+1; cand <= M; cand++) {
+                selected[k] = cand;
+                rect_func(k+1);
+                selected[k] = 0;
+            }
+
         }
     }
 
